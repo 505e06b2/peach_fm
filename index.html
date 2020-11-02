@@ -6,10 +6,184 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="manifest" href="manifest.webmanifest">
 
+		<style>
+			@keyframes scroll {
+				from {
+					transform: translate3d(0,0,0);
+				}
+
+				to {
+					transform: translate3d(-128px,-128px,0);
+				}
+			}
+
+			.background {
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				width: 200vw;
+				height: 200vh;
+				z-index: -1;
+				background-image: url("bg.png");
+				animation: scroll 5s linear infinite;
+				filter: blur(2px);
+			}
+
+			.container {
+				display: flex;
+				flex-direction: column;
+				min-height: 0px;
+				background-color: #9f9f9f;
+
+				position: absolute;
+				height: 50vmin;
+				width: 50vmin;
+				padding: 20px;
+
+				border-radius: 10px;
+				border-top: 5px solid #d1d1d1;
+				border-right: 5px solid #8d8f8e;
+				border-left: 5px solid #7b7c7b;
+				border-bottom: 5px solid #676c65;
+			}
+
+			.image {
+				min-height: 0px;
+				flex: 1 1 100%;
+				text-align: center;
+				margin: 10px;
+			}
+
+			.image img,
+			.buttons > *,
+			.volume input {
+				box-sizing: border-box;
+				background: #9fe74f;
+				border-radius: 10px;
+				border-top: 5px solid #62675f;
+				border-right: 5px solid #7b7e78;
+				border-left: 5px solid #8d8f8c;
+				border-bottom: 5px solid #bcc3b4;
+			}
+
+			.buttons {
+				display: flex;
+				text-align: center;
+				font-weight: bold;
+				font-family: monospace;
+			}
+
+			.buttons > * {
+				margin: 10px;
+				cursor: pointer;
+				padding: 5px;
+			}
+
+			.buttons .playpause {
+				flex: 1 1 100%;
+			}
+
+			.buttons .playpause:hover {
+				color: #486824;
+			}
+
+			.volume {
+				position: relative;
+				margin: 5px;
+				padding: 5px;
+				flex: 0 0 10%;
+			}
+
+			.volume::after {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				content: "Volume";
+				position: absolute;
+				top: 5px;
+				left: 20px;
+				bottom: 0px;
+				color: #211a01;
+				font-weight: bold;
+				font-family: monospace;
+			}
+
+			body {
+				height: 100vh;
+				width: 100vw;
+
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				background-color: #075777;
+				color: #211a01;
+				overflow: hidden;
+				font-family: sans-serif;
+				user-select: none;
+			}
+
+			img {
+				height: 100%;
+			}
+
+			a:link,
+			a:visited {
+				color: #211a01;
+			}
+
+			a:hover,
+			a:active {
+				color: #486824;
+			}
+
+			input[type="range"] {
+				-webkit-appearance: none;
+				appearance: none;
+
+				width: 100%;
+				height: 100%;
+				cursor: pointer;
+
+				outline: none;
+			}
+
+			input[type="range"]::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				appearance: none;
+
+				width: 5px;
+				height: 100%;
+				background: #211a01;
+			}
+
+			input[type="range"]::-moz-range-thumb {
+				width: 5px;
+				height: 100%;
+				background: #211a01;
+			}
+
+			footer {
+				position: absolute;
+				bottom: 5px;
+				left: 0px;
+				right: 0px;
+				text-align: center;
+				font-size: 80%;
+				color: white;
+			}
+		</style>
+
 		<script>
 			let audio;
 			function setVolume(v) {
 				audio.volume = v;
+			}
+
+			function playpause() {
+				if(audio.paused) audio.play();
+				else audio.pause();
 			}
 
 			window.onbeforeunload = () => {
@@ -21,10 +195,17 @@
 			window.onload = () => {
 				audio = new Audio("peach_fm.ogg");
 
-				audio.onplay = () => {document.querySelector('#playButton').style.display = "none"};
-
 				audio.onloadedmetadata = () => {
+					const button = document.querySelector('#playButton');
 					audio.currentTime = Math.random() * audio.duration;
+
+					audio.onplay = () => {
+						button.innerHTML = "Pause";
+					}
+
+					audio.onpause = () => {
+						button.innerHTML = "Play";
+					}
 
 					audio.volume = 0.5;
 					audio.loop = true;
@@ -34,9 +215,15 @@
 		</script>
 	</head>
 	<body>
+		<div class="background"></div>
 		<div class="container">
-			<div>Volume: <input type="range" min="0" max="1" step="0.05" value="0.5"  oninput="setVolume(this.value)"></div>
-			<div id="playButton" onclick="audio.play()">Play!</div>
+			<div class="image"><img src="peach.png"></div>
+			<div class="buttons">
+				<a href="peach_fm.ogg" download="peach_fm.ogg">[Download]</a>
+				<span class="playpause" onclick="playpause()">[<span id="playButton">Play</span>]</span>
+			</div>
+			<div class="volume"><input title="Volume" type="range" min="0" max="1" step="0.05" value="0.5"  oninput="setVolume(this.value)"></div>
 		</div>
+		<footer>Audio recorded via PCSX2 + the PAL version of Road Trip Adventure</footer>
 	</body>
 </html>
