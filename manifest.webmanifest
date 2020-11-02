@@ -1,0 +1,8 @@
+{
+	"short_name": "Peach FM",
+	"name": "Peach FM",
+	"start_url": "index.html",
+	"background_color": "#333",
+	"theme_color": "#333",
+	"display": "standalone"
+}

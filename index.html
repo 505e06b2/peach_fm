@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<script>if(location.pathname.endsWith("/")) location.href += "index.html";</script>
+		<title>Peach FM</title>
+		<meta charset="utf8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="manifest" href="manifest.webmanifest">
+
+		<script>
+			let audio;
+			function setVolume(v) {
+				audio.volume = v;
+			}
+
+			window.onbeforeunload = () => {
+				audio.pause();
+				audio.src = ""; //force stop audio, or it will try to download the entire thing first
+				audio = null;
+			}
+
+			window.onload = () => {
+				audio = new Audio("peach_fm.ogg");
+
+				audio.onplay = () => {document.querySelector('#playButton').style.display = "none"};
+
+				audio.onloadedmetadata = () => {
+					audio.currentTime = Math.random() * audio.duration;
+
+					audio.volume = 0.5;
+					audio.loop = true;
+					audio.play();
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<div>Volume: <input type="range" min="0" max="1" step="0.05" value="0.5"  oninput="setVolume(this.value)"></div>
+			<div id="playButton" onclick="audio.play()">Play!</div>
+		</div>
+	</body>
+</html>
