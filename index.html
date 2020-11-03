@@ -8,38 +8,27 @@
 
 		<style>
 			@keyframes scroll {
-				from {
-					transform: translate3d(0,0,0);
-				}
-
-				to {
-					transform: translate3d(-128px,-128px,0);
-				}
-			}
-
-			.background {
-				position: absolute;
-				top: 0px;
-				left: 0px;
-				width: 200vw;
-				height: 200vh;
-				z-index: -1;
-				background-image: url("bg.png");
-				animation: scroll 5s linear infinite;
-				filter: blur(2px);
+				from { background-position: 0px    0px;    }
+				to   { background-position: -128px -128px; }
 			}
 
 			.container {
-				display: flex;
-				flex-direction: column;
-				min-height: 0px;
 				background-color: #9f9f9f;
 
 				position: absolute;
 				height: 50vmin;
 				width: 50vmin;
 				padding: 20px;
+			}
 
+			@media (orientation: portrait) {
+				.container {
+					height: 80vmin;
+					width: 80vmin;
+				}
+			}
+
+			.emboss {
 				border-radius: 10px;
 				border-top: 5px solid #d1d1d1;
 				border-right: 5px solid #8d8f8e;
@@ -48,17 +37,22 @@
 			}
 
 			.image {
-				min-height: 0px;
-				flex: 1 1 100%;
+				height: 60%;
 				text-align: center;
 				margin: 10px;
 			}
 
-			.image img,
-			.buttons > *,
+			.image img {
+				filter: drop-shadow(0px -5px 0px #d1d1d1) /*top*/
+				        drop-shadow(5px 0px 0px #8d8f8e) /*right*/
+				        drop-shadow(-5px 0px 0px #7b7c7b) /*left*/
+				        drop-shadow(0px 5px 0px #676c65); /*bottom*/
+			}
+
+			.buttons > a:active,
 			.volume input {
 				box-sizing: border-box;
-				background: #9fe74f;
+				background: #267d5d;
 				border-radius: 10px;
 				border-top: 5px solid #62675f;
 				border-right: 5px solid #7b7e78;
@@ -67,31 +61,34 @@
 			}
 
 			.buttons {
+				height: 15%;
 				display: flex;
 				text-align: center;
 				font-weight: bold;
 				font-family: monospace;
 			}
 
-			.buttons > * {
+			.buttons > a {
 				margin: 10px;
 				cursor: pointer;
 				padding: 5px;
+
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background: #3fcf97;
 			}
 
 			.buttons .playpause {
 				flex: 1 1 100%;
 			}
 
-			.buttons .playpause:hover {
-				color: #486824;
-			}
-
 			.volume {
 				position: relative;
 				margin: 5px;
 				padding: 5px;
-				flex: 0 0 10%;
+				height: 10%;
+				color: #008029;
 			}
 
 			.volume::after {
@@ -100,11 +97,12 @@
 				justify-content: center;
 
 				content: "Volume";
+				pointer-events: none;
 				position: absolute;
 				top: 5px;
 				left: 20px;
 				bottom: 0px;
-				color: #211a01;
+				color: #003111;
 				font-weight: bold;
 				font-family: monospace;
 			}
@@ -122,6 +120,9 @@
 				overflow: hidden;
 				font-family: sans-serif;
 				user-select: none;
+
+				background-image: url("bg.png");
+				animation: scroll 5s linear infinite;
 			}
 
 			img {
@@ -129,13 +130,15 @@
 			}
 
 			a:link,
-			a:visited {
-				color: #211a01;
-			}
-
+			a:visited,
 			a:hover,
 			a:active {
-				color: #486824;
+				text-decoration: none;
+				color: #008029;
+			}
+
+			a:active {
+				color: #003111;
 			}
 
 			input[type="range"] {
@@ -215,12 +218,11 @@
 		</script>
 	</head>
 	<body>
-		<div class="background"></div>
-		<div class="container">
+		<div class="container emboss">
 			<div class="image"><img src="peach.png"></div>
 			<div class="buttons">
-				<a href="peach_fm.ogg" download="peach_fm.ogg">[Download]</a>
-				<span class="playpause" onclick="playpause()">[<span id="playButton">Play</span>]</span>
+				<a class="emboss" href="peach_fm.ogg" download="peach_fm.ogg">Download</a>
+				<a class="playpause emboss" onclick="playpause(); return false;" href="#" id="playButton">Play</a>
 			</div>
 			<div class="volume"><input title="Volume" type="range" min="0" max="1" step="0.05" value="0.5"  oninput="setVolume(this.value)"></div>
 		</div>
